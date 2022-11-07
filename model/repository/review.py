@@ -1,3 +1,6 @@
+from model.entity.review import Review
+from model.connection_db import execute, commit
+
 class ReviewRepository:
     def insert(review:Review) -> None:
         sql = f"""

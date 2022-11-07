@@ -1,5 +1,4 @@
 from model.entity.movie import Movie
-from model.entity.review import Review
 from model.connection_db import execute, commit
 
 class MovieRepository():
