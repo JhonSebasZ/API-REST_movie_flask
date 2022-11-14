@@ -4,15 +4,20 @@ from model.repository.movie import MovieRepository
 from flask import request
 from controller.response.api import ApiResponse
 from MySQLdb import IntegrityError
+from controller.validations.validation import Validation
 
 repository = MovieRepository()
 
 @app.route('/api/movies', methods=['GET'])
 def listMovies():
-    response = repository.findAll()
-    movies = [movie.toDic() for movie in response]
-    api = ApiResponse(data=movies)
-    return api.toDic(), 200
+    try:
+        response = repository.findAll()
+        movies = [movie.toDic() for movie in response]
+        api = ApiResponse(data=movies)
+        return api.toDic(), 200
+    except Exception as ex:
+        api = ApiResponse(message=str(ex))
+        return api.toDic(), 400
 
 @app.route('/api/movies/<code>', methods=['GET'])
 def listMoviesByCode(code):
@@ -22,23 +27,32 @@ def listMoviesByCode(code):
         movie = repository.findByCode(code)
         api = ApiResponse(data=movie.toDic())
         status = 200
+        return api.toDic(), status
     except Exception as ex:
         api = ApiResponse(message=str(ex))
         return api.toDic(), status
-    return api.toDic(), status
 
 @app.route('/api/movies', methods=['POST'])
 def create():
     status = 400
     data = request.get_json(force=True)
+    validation = Validation()
     
-    if data.get('code') is None:
-        api = ApiResponse(message='The code of the movie is required')
-        return api.toDic(), status
+    # Mandatory data validation
+    if validation.required(data.get('code'), 'code'):
+        return validation.required(data.get('code'), 'code'), status
+    if validation.required(data.get('name'), 'name'):
+        return validation.required(data.get('name'), 'name'), status
     
-    if data.get('name') is None:
-        api = ApiResponse(message='The name of the movie is required')
-        return api.toDic(), status
+    # Data type validations
+    if validation.isStr(data.get('code'), 'code'):
+        return validation.isStr(data.get('code'), 'code'), status
+    if validation.isStr(data.get('name'), 'name'):
+        return validation.isStr(data.get('name'), 'name'), status
+    if validation.isStr(data.get('image_url'), 'image_url'):
+        return validation.isStr(data.get('image_url'), 'image_url'), status
+    if validation.isInt(data.get('year'), 'year'):
+        return validation.isInt(data.get('year'), 'year'), status               
         
     movie = Movie(
         code=data.get('code'),
@@ -47,8 +61,12 @@ def create():
         year=data.get('year')
     )
     
+    #exception handling
     try:
-        repository.insert(movie)
+        repository.create(movie)
+        api = ApiResponse(data=True)
+        status = 201
+        return api.toDic(), status
     except IntegrityError as ex:
         if ex.args[0] != 1062:
             api = ApiResponse(message=str(ex))
@@ -59,7 +77,3 @@ def create():
     except:
         api = ApiResponse(message='Unexpeted error')
         return api.toDic(), status
-        
-    api = ApiResponse(data=True)
-    status = 201
-    return api.toDic(), status
