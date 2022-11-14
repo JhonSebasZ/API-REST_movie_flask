@@ -21,7 +21,6 @@ def listMovies():
 
 @app.route('/api/movies/<code>', methods=['GET'])
 def listMoviesByCode(code):
-    api = None
     status = 400
     try:
         movie = repository.findByCode(code)

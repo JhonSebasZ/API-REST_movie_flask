@@ -2,17 +2,17 @@ from model.entity.review import Review
 from model.connection_db import execute, commit
 
 class ReviewRepository:
-    def insert(self, review:Review) -> None:
+    def create(self, review:Review) -> None:
         sql = f"""
                 INSERT INTO review (name, email, description, rating, code)
-                VALUE ('{review.get_name()}', '{review.get_email()}',
-                '{review.get_description()}', {review.get_rating()}, '{review.get_code()}')
+                VALUE ('{review.getName()}', '{review.getEmail()}',
+                '{review.getDescription()}', {review.getRating()}, '{review.getCodeMovie()}')
             """
         cursor = execute(sql)
         cursor.close()
         commit()
     
-    def find_by_id(self, id:int) -> Review:
+    def findById(self, id:int) -> Review:
         sql = f"""
                 SELECT * FROM review 
                 WHERE id={id}
@@ -20,12 +20,16 @@ class ReviewRepository:
         cursor = execute(sql)
         result = cursor.fetchone()
         cursor.close()
+        
+        if result == None:
+            raise Exception(f'The movie with the code "{id}" does not exist')
+        
         review = Review(id=result[0], name=result[1], email=result[2],
                         description=result[3], rating=result[4], code_movie=result[5])
-
+        
         return review
         
-    def find_by_movie_code(self, code:str) -> list:
+    def findByMovieCode(self, code:str) -> list:
         sql = f"""
                 SELECT * FROM review
                 WHERE code='{code}'
@@ -46,12 +50,12 @@ class ReviewRepository:
     def update(self, review:Review) -> None:
         sql = f"""
                 UPDATE review
-                SET name='{review.get_name()}',
-                    email='{review.get_email()}',
-                    description='{review.get_description()}',
-                    rating='{review.get_rating()}',
-                    code='{review.get_code_movie()}'
-                WHERE id={review.get_id()}
+                SET name='{review.getName()}',
+                    email='{review.getEmail()}',
+                    description='{review.getDescription()}',
+                    rating='{review.getRating()}',
+                    code='{review.getCodeMovie()}'
+                WHERE id={review.getId()}
             """
         cursor = execute(sql)
         cursor.close()
