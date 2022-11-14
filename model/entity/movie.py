@@ -5,20 +5,28 @@ class Movie:
         self.__image_url = image_url
         self.__year = year
     
-    def get_code(self) -> str:
+    def getCode(self) -> str:
         return self.__code
     
-    def get_name(self) -> str:
+    def getName(self) -> str:
         return self.__name
         
-    def get_image_url(self) -> str:
+    def getImageUrl(self) -> str:
         return self.__image_url
     
-    def set_image_url(self, image_url:str) -> None:
+    def setImageUrl(self, image_url:str) -> None:
         self.__image_url = image_url
         
-    def get_year(self) -> int:
+    def getYear(self) -> int:
         return self.__year
     
-    def set_year(self, year:int) -> None:
+    def setYear(self, year:int) -> None:
         self.__year = year
+    
+    def toDic(self):
+        return {
+            'code': self.__code,
+            'name': self.__name,
+            'image_url': self.__image_url,
+            'year': self.__year
+        }

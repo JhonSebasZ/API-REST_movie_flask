@@ -1,4 +1,4 @@
-from aplication import app
+from application import app
 from flask_mysqldb import MySQL
 from MySQLdb.cursors import Cursor
 
@@ -6,7 +6,7 @@ app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'movie_flask'
-app.config['MYSQL_PORT'] = 3606
+app.config['MYSQL_PORT'] = 3306
 
 mysql = MySQL(app)
 
@@ -16,4 +16,4 @@ def execute(sql:str) -> Cursor:
     return cursor
 
 def commit() -> None:
-    mysql.connection.comment()
+    mysql.connection.commit()

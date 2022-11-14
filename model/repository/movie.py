@@ -2,17 +2,19 @@ from model.entity.movie import Movie
 from model.connection_db import execute, commit
 
 class MovieRepository():
-    def insert(movie:Movie) -> None:
+    def create(self,movie:Movie) -> None:
+        image = movie.getImageUrl() if movie.getImageUrl() != None else 'NULL'
+        year = movie.getYear() if movie.getYear() != None else 'NULL'
         sql = f"""
                 INSERT INTO movie (code, name, image_url, year)
-                VALUES ('{movie.get_code()}', '{movie.get_name()}',
-                        '{movie.get_image_url()}', '{movie.get_year()}')
+                VALUES ('{movie.getCode()}', '{movie.getName()}',
+                        '{image}', {year})
             """
         cursor = execute(sql)
         cursor.close()
         commit()   
     
-    def find_by_code(code:str) -> Movie:
+    def findByCode(self, code:str) -> Movie:
         sql = f"""
                 SELECT * FROM movie
                 WHERE code='{code}'
@@ -20,6 +22,10 @@ class MovieRepository():
         cursor = execute(sql)
         result = cursor.fetchone()
         cursor.close()
+        
+        if result == None:
+            raise Exception(f'The movie with the code "{code}" does not exist')
+        
         movie = Movie(
             code=result[0], name=result[1],
             image_url=result[2], year=result[3]
@@ -27,7 +33,7 @@ class MovieRepository():
         
         return movie
     
-    def find_all() -> list:
+    def findAll(self) -> list:
         sql = """
                 SELECT * FROM movie
             """

@@ -2,7 +2,7 @@ from model.entity.review import Review
 from model.connection_db import execute, commit
 
 class ReviewRepository:
-    def insert(review:Review) -> None:
+    def insert(self, review:Review) -> None:
         sql = f"""
                 INSERT INTO review (name, email, description, rating, code)
                 VALUE ('{review.get_name()}', '{review.get_email()}',
@@ -12,7 +12,7 @@ class ReviewRepository:
         cursor.close()
         commit()
     
-    def find_by_id(id:int) -> Review:
+    def find_by_id(self, id:int) -> Review:
         sql = f"""
                 SELECT * FROM review 
                 WHERE id={id}
@@ -25,7 +25,7 @@ class ReviewRepository:
 
         return review
         
-    def find_by_movie_code(code:str) -> list:
+    def find_by_movie_code(self, code:str) -> list:
         sql = f"""
                 SELECT * FROM review
                 WHERE code='{code}'
@@ -43,7 +43,7 @@ class ReviewRepository:
         
         return reviews
     
-    def update(review:Review) -> None:
+    def update(self, review:Review) -> None:
         sql = f"""
                 UPDATE review
                 SET name='{review.get_name()}',
@@ -57,7 +57,7 @@ class ReviewRepository:
         cursor.close()
         commit()
     
-    def delete(id:int) -> None:
+    def delete(self, id:int) -> None:
         sql = f"""
                 DELETE FROM review
                 WHERE id={id}

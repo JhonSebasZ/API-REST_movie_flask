@@ -1,4 +1,4 @@
-from aplication import app
+from application import app
 from model.entity.review import Review
 from model.repository.review import ReviewRepository
 
@@ -17,11 +17,11 @@ def find_by_id(id):
 def find_by_movie_code(code):
     return repositoty.find_by_movie_code(code)
 
-@app.route('/api/reviews', methods=['PUT'])
+@app.route('/api/reviews/<id>', methods=['PUT'])
 def update():
     review = Review()
     repositoty.update(review)
 
-@app.route('/api/reviews/<id>')
+@app.route('/api/reviews/<id>', methods=['DELETE'])
 def delete(id):
     repositoty.delete(id)
